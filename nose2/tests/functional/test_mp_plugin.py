@@ -1,3 +1,5 @@
+import os
+import platform
 import sys
 
 from nose2 import session
@@ -215,6 +217,10 @@ class MPPluginTestRuns(FunctionalTestCase):
         self.assertTestRunOutputMatches(proc, stderr='Ran 600 tests')
         self.assertEqual(proc.poll(), 0)
 
+    @unittest.skipIf(
+        os.getenv("GITHUB_ACTIONS") is not None and platform.system() == "Darwin",
+        "fails on GitHub Actions macOS runner",
+    )
     def test_socket_stresstest(self):
         proc = self.runIn(
             'scenario/many_tests_socket',
